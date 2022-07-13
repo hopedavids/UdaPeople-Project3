@@ -4,32 +4,40 @@ commands:
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     parameters:
-      # Add parameter here   
+      # Add parameter here  
+      ID: 
+        type: string
+        default: None
     steps:
       - run:
           name: Destroy environments
           when: on_fail
           command: |
-            # Your code here
-            exit 1
+            aws cloudformation delete-stack --stack-name udapeople-backend-<<parameter.ID>>
+            aws s3 rm s3://udapeople-<<parameter.ID>> --recursive
+            aws cloudformation delete-stack --stack-name udapeople-frontend-<<parameter.ID>>
 
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
     parameters:
-      # Add parameter here     
+      # Add parameter here
+      ID: 
+        type: string
+        default: None
+
     steps:
       - run:
           name: Revert migrations
           # Add when this will run
+          when: on_fail
           command: |
             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
             SUCCESS = 1
             if(( $SUCCESS==1 )); 
             then
-            #  cd ~/project/backend
-            #  npm install
-            #  Add revert code here. You can find this in the Getting Started section.
-              exit 1
+              cd ~/project/backend
+              npm install
+              npm run migration:revert
             fi
             
 jobs:
@@ -43,8 +51,10 @@ jobs:
       - run:
           name: Build front-end
           command: |
-            # Your code here
-            exit 1
+            cd frontend
+            npm install
+            npm run build
+            
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
@@ -59,58 +69,121 @@ jobs:
       - run:
           name: Back-end build
           command: |
-             # Your code here
-             exit 1
+             cd backend
+             npm install
+             npm run build
+             npm audit fix --audit-level=critical
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
 
   test-frontend:
     docker:
+      - image: circleci/node:13.8.0
       # Docker image here
     steps:
+      - checkout
+      # restore_cache
+      - run:
+          name: test frontend
+          command: |
+            cd frontend
+            npm install
+            npm run test
       # Checkout code from git
       # Restore from cache
       # Your job code here
                 
   test-backend:
     docker:
+      - image: circleci/node:13.8.0
       # Docker image here
     steps:
+      - checkout
+      # restore_cache
+      - run:
+          name: test backend
+          command: |
+            cd backend
+            npm install
+            npm run test
       # Checkout code from git
       # Restore from cache
       # Your job code here
             
   scan-frontend:
     docker:
+      - image: circleci/node:13.8.0
       # Docker image here
     steps:
+      - checkout
+      # restore_cache
+      - run:
+          name: scan frontend
+          command: |
+            cd frontend
+            npm install
+            npm audit fix --audit-level=critical --force
+            npm audit --audit-level=critical
+      - save_cache:
+          paths: [frontend/node_modules]
+          key: frontend-build
+
       # Checkout code from git
       # Restore from cache
       # Your job code here
 
   scan-backend:
     docker:
+       - image: circleci/node:13.8.0
       # Docker image here
     steps:
+      - checkout
+      - restore_cache:
+          keys: [backend-build]
+      - run:
+          name: scan backend
+          command: |
+            cd backend
+            npm install
+            npm audit fix --audit-level=critical --force
+            npm audit --audit-level=critical
       # Checkout code from git
       # Restore from cache
       # Your job code here
 
   deploy-infrastructure:
     docker:
+       - image: amazon/aws-cli
       # Docker image here that supports AWS CLI
     steps:
+      - checkout
       # Checkout code from git
+      - run:
+          name: install the tar utility
+          command: |
+            yum install -y tar gzip 
+      - run: 
+          name: saved old workflowID
+          command: |
+            export OldWorkflowID=$(aws cloudformation \
+              list-exports --query "Exports[?Name==\`workflowID\`].value"\
+              --no-paginate --output text)
+
+            aws cloudformation \
+              list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+              --no-paginate --output text >> OldWorkflowID.txt
+            echo OldWorkflowID: "${OldWorkflowID}"
+
       - run:
           name: Ensure back-end infrastructure exists
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/backend.yml \
-              #--tags project=your-tag \
-              # --stack-name "your back-end stack name with workflow id" \
-              # --parameter-overrides ID="your workflow id"  
-              exit 1
+              --tags project=your-tag \
+              --stack-name "your back-end stack name with workflow id" \
+              --parameter-overrides ID="your workflow id"  
+              
       - run:
           name: Ensure front-end infrastructure exist
           command: |
