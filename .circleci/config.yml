@@ -127,7 +127,7 @@ jobs:
           command: |
             cd frontend
             npm install
-            npm audit fix --audit-level=critical 
+           # npm audit fix --audit-level=critical 
           # npm audit fix --force
            # npm audit --audit-level=critical
       - save_cache:
