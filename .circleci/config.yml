@@ -154,18 +154,36 @@ jobs:
 
   deploy-infrastructure:
     docker:
+       - image: amazon/aws-cli
       # Docker image here that supports AWS CLI
     steps:
+      - checkout
       # Checkout code from git
+      - run:
+          name: install the tar utility
+          command: |
+            yum install -y tar gzip 
+      - run: 
+          name: saved old workflowID
+          command: |
+            export OldWorkflowID=$(aws cloudformation \
+              list-exports --query "Exports[?Name==\`workflowID\`].value"\
+              --no-paginate --output text)
+
+            aws cloudformation \
+              list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+              --no-paginate --output text >> OldWorkflowID.txt
+            echo OldWorkflowID: "${OldWorkflowID}"
+
       - run:
           name: Ensure back-end infrastructure exists
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/backend.yml \
-              #--tags project=your-tag \
-              # --stack-name "your back-end stack name with workflow id" \
-              # --parameter-overrides ID="your workflow id"  
-              exit 1
+              --tags project=your-tag \
+              --stack-name "your back-end stack name with workflow id" \
+              --parameter-overrides ID="your workflow id"  
+              
       - run:
           name: Ensure front-end infrastructure exist
           command: |
