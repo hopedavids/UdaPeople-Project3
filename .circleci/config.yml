@@ -225,7 +225,7 @@ jobs:
             apk add --update openssh-client git
       # Add ssh keys with fingerprint
       - add_ssh_keys:
-          fingerprints: ["a8:46:0b:dc:6d:b6:55:72:68:38:0f:71:c4:8d:73:87"] #["e4:31:75:0e:cf:31:37:bc:25:8a:74:c8:14:d0:91:7b"]
+          fingerprints: ["a8:46:0b:dc:6d:b6:55:72:68:38:0f:71:c4:8d:73:87"] 
       # attach workspace
       - attach_workspace:
           at: ~/
@@ -336,7 +336,7 @@ jobs:
             apk add --update openssh-client git
       # Add ssh keys with fingerprint
       - add_ssh_keys:
-          fingerprints: ["a8:46:0b:dc:6d:b6:55:72:68:38:0f:71:c4:8d:73:87"]#["e4:31:75:0e:cf:31:37:bc:25:8a:74:c8:14:d0:91:7b"]
+          fingerprints: ["a8:46:0b:dc:6d:b6:55:72:68:38:0f:71:c4:8d:73:87"]
       # attach workspace
       - attach_workspace:
           at: ~/
@@ -461,7 +461,7 @@ jobs:
           command: |
             apk add --update openssh-client git
       - add_ssh_keys:
-          fingerprints: ["e4:31:75:0e:cf:31:37:bc:25:8a:74:c8:14:d0:91:7b"]
+          fingerprints: ["a8:46:0b:dc:6d:b6:55:72:68:38:0f:71:c4:8d:73:87"]
       - run:
           name: Install Dependencies
           command: |
