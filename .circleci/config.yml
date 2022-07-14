@@ -150,9 +150,9 @@ jobs:
           command: |
             cd backend
             npm install
-          #  npm audit fix --audit-level=critical
-            npm audit fix #--force
-          #  npm audit --audit-level=critical
+            npm audit fix --audit-level=critical
+            npm audit fix --force
+            npm audit --audit-level=critical
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
@@ -259,11 +259,11 @@ jobs:
       - run:
           name: Run migrations
           command: |
-            # Your code here
+          
             cd backend
             npm install
             npm run migrations > migrations_dump.txt
-            # exit 1
+            
       - run:
           name: Send migration results to kvdb
           command: |
@@ -336,7 +336,7 @@ jobs:
             apk add --update openssh-client git
       # Add ssh keys with fingerprint
       - add_ssh_keys:
-          fingerprints: ["e4:31:75:0e:cf:31:37:bc:25:8a:74:c8:14:d0:91:7b"]
+          fingerprints: ["a8:46:0b:dc:6d:b6:55:72:68:38:0f:71:c4:8d:73:87"]#["e4:31:75:0e:cf:31:37:bc:25:8a:74:c8:14:d0:91:7b"]
       # attach workspace
       - attach_workspace:
           at: ~/

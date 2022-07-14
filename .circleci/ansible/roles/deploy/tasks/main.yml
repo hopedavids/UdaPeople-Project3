@@ -1,0 +1,23 @@
+---
+- name: Create directiory
+  file:
+    path: ~/backend
+    state: directory
+
+- name: Extract files into the EC2 instance
+  unarchive:
+    src: artifact.tar.gz
+    dest: ~/backend
+
+- name: Start the app
+  become: true
+  shell: |
+    cd backend
+    npm install
+
+
+- name: Start pm2
+  become: true
+  shell: |
+    cd backend
+    pm2 start npm -- start
