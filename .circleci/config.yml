@@ -181,7 +181,7 @@ jobs:
       - run:
           name: Ensure back-end infrastructure exists
           command: |
-            aws cloudformation depl0y \
+            aws cloudformation deploy \
               --template-file .circleci/files/backend.yml \
               --tags project=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:8} \
               --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:8}" \
@@ -189,7 +189,7 @@ jobs:
       - run:
           name: Ensure front-end infrastructure exist
           command: |
-            aws cloudformation depl0y \
+            aws cloudformation deploy \
               --template-file .circleci/files/frontend.yml \
               --tags project=udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:8} \
               --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:8}" \
@@ -225,7 +225,7 @@ jobs:
             apk add --update openssh-client git
       # Add ssh keys with fingerprint
       - add_ssh_keys:
-          fingerprints: ["e4:31:75:0e:cf:31:37:bc:25:8a:74:c8:14:d0:91:7b"]
+          fingerprints: ["a8:46:0b:dc:6d:b6:55:72:68:38:0f:71:c4:8d:73:87"] #["e4:31:75:0e:cf:31:37:bc:25:8a:74:c8:14:d0:91:7b"]
       # attach workspace
       - attach_workspace:
           at: ~/
