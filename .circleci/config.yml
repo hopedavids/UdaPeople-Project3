@@ -361,7 +361,7 @@ jobs:
             tar -C backend -czvf artifact.tar.gz .
             # tree -afC /root/project/.circleci -I *node_modules*
             mkdir -p ~/project/.circleci/ansible/roles/deploy/files/
-            sudo mv artifact.tar.gz .circleci/ansible/roles/depFloy/files/artifact.tar.gz
+            mv artifact.tar.gz .circleci/ansible/roles/depFloy/files/artifact.tar.gz
       - run:
           name: Deploy backend
           command: |
